@@ -12,45 +12,50 @@
 #JMP 10 ADDRESS
 #LDR 11 DEST R9
 #BIF 
+#ALUの実装
 class ALU:
+    #AとBを持つ、状態をYで返すALUです。
     def __init__(self,cpu):
         self.cpu = cpu
         self.A = 0
         self.B = 0
         self.Y = 0
         self.OPCODE = 0
-        self.Y = 0
         #Register or Memory
-        self.RM = 0
+    #ALUを実行します。
     def run(self):
+        #OPCODEで分岐
         if self.OPCODE == 0:
-            Y = self.ReadRM(self.A) + self.ReadRM(self.B)
+            Y = self.Read(self.A) + self.Read(self.B)
         if self.OPCODE == 1:
-            Y = self.ReadRM(self.A) - self.ReadRM(self.B)
+            Y = self.Read(self.A) - self.Read(self.B)
         if self.OPCODE == 2:
-            Y = self.ReadRM(self.A) or self.ReadRM(self.B)
+            Y = self.Read(self.A) or self.Read(self.B)
         if self.OPCODE == 3:
-            Y = not (self.ReadRM(self.A) or self.ReadRM(self.B))
+            Y = not (self.Read(self.A) or self.Read(self.B))
         if self.OPCODE == 4:
-            Y = self.ReadRM(self.A) and self.ReadRM(self.B)
+            Y = self.Read(self.A) and self.Read(self.B)
         if self.OPCODE == 5:
-            Y = self.ReadRM(self.A) ^ self.ReadRM(self.B)
+            Y = self.Read(self.A) ^ self.Read(self.B)
         if self.OPCODE == 6:
-            Y = self.ReadRM(self.A) + 1
+            Y = self.Read(self.A) + 1
         if self.OPCODE == 7:
-            Y = self.ReadRM(self.A) - 1
+            Y = self.Read(self.A) - 1
+        #XORが未実装です。
         if self.OPCODE == 8:
             pass
         if self.OPCODE == 9:
-            self.WriteRM(self.A,self.B)
+            self.ReadWrite(self.A,self.B)
         if self.OPCODE == 10:
             self.cpu.register.R9 = self.A
             pass
         if self.OPCODE == 11:
-            self.WriteRM(self.A,self.cpu.register.R9)
+            self.ReadWrite(self.A,self.cpu.register.R9)
             pass
             self.cpu.register.set(10,self.Y)
-    def ReadRM(self,dest):
+    #メモリーから読み取る。
+    def Read(self,dest):
         return self.cpu.memory.getMemory(dest)
-    def WriteRM(self,dest,value):
+    #メモリーへ書きこむ
+    def ReadWrite(self,dest,value):
         return self.cpu.memory.setMemory(dest,value)
